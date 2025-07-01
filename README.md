@@ -4,6 +4,11 @@ A modern & lightweight C++ implementation of the RTPGHI algorithm for phase voco
 "Phase Vocoder Done Right" by Průša & Holighaus (2017). This is written with real-time audio processing
 in mind, providing a header-only library that is easy to integrate into existing projects.
 
+```text
+Z. Průša and N. Holighaus. Phase vocoder done right. In Proc. Eur. Signal Process. Conf. EUSIPCO, pages
+1006–1010, Kos island, Greece, Aug. 2017.
+```
+
 ## Overview
 
 RTPGHI is a gradient-based phase vocoder algorithm that provides high-quality time-stretching without
