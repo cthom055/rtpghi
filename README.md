@@ -1,15 +1,14 @@
 # RTPGHI - Real-Time Phase Gradient Heap Integration
 
-A modern & lightweight C++ implementation of the RTPGHI algorithm for phase vocoding, as
-described in "Phase Vocoder Done Right" by Průša & Holighaus (2017). This is written with
-real-time audio processing in mind, providing a header-only library that is easy to integrate into existing projects.
+A modern & lightweight C++ implementation of the RTPGHI algorithm for phase vocoding, as described in
+"Phase Vocoder Done Right" by Průša & Holighaus (2017). This is written with real-time audio processing
+in mind, providing a header-only library that is easy to integrate into existing projects.
 
 ## Overview
 
-RTPGHI is a gradient-based phase vocoder algorithm that provides high-quality
-time-stretching without the typical artifacts of traditional phase vocoders.
-It uses a heap with a novel phase propagation method instead of peak picking to
-maintain phase coherence across both frequency and time.
+RTPGHI is a gradient-based phase vocoder algorithm that provides high-quality time-stretching without
+the typical artifacts of traditional phase vocoders. It uses a heap with a novel phase propagation method
+instead of peak picking to maintain phase coherence across both frequency and time.
 
 ## Features
 
@@ -108,8 +107,8 @@ This library currently contains:
 - ✅ Cross-platform build system
 - 🚧 RTPGHI algorithm implementation (in progress)
 
-The placeholder implementation currently performs simple phase integration.
-The full RTPGHI algorithm with heap integration will be implemented soon.
+The placeholder implementation currently performs simple phase integration. The full RTPGHI algorithm
+with heap integration will be implemented soon.
 
 ## Development
 
@@ -170,5 +169,5 @@ This project is licensed under the MIT License.
 
 ## References
 
-Průša, Z., & Holighaus, N. (2017). Phase Vocoder Done Right. In _Proceedings
-of the European Signal Processing Conference (EUSIPCO)_ (pp. 1006-1010).
+Průša, Z., & Holighaus, N. (2017). Phase Vocoder Done Right. In _Proceedings of the European Signal
+Processing Conference (EUSIPCO)_ (pp. 1006-1010).
