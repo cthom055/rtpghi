@@ -7,8 +7,8 @@ described in "Phase Vocoder Done Right" by Průša & Holighaus (2017).
 
 RTPGHI is a gradient-based phase vocoder algorithm that provides high-quality
 time-stretching without the typical artifacts of traditional phase vocoders.
-It uses phase gradient estimation and heap integration to maintain phase
-coherence across frequency bins.
+It uses a heap with a novel phase propagation method instead of peak picking to
+maintain phase coherence across both frequency and time.
 
 ## Features
 
@@ -169,5 +169,5 @@ This project is licensed under the MIT License.
 
 ## References
 
-Průša, Z., & Holighaus, N. (2017). Phase Vocoder Done Right. In *Proceedings
-of the European Signal Processing Conference (EUSIPCO)* (pp. 1006-1010).
+Průša, Z., & Holighaus, N. (2017). Phase Vocoder Done Right. In _Proceedings
+of the European Signal Processing Conference (EUSIPCO)_ (pp. 1006-1010).
