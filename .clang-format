@@ -38,13 +38,14 @@ BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 
-# Short statements
+# Short statements and braces
 AllowShortBlocksOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
+RemoveBracesLLVM: false  # Always keep braces for if/else statements
 
 # Spacing
 SpaceBeforeCpp11BracedList: true
