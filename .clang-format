@@ -45,7 +45,7 @@ AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
-RemoveBracesLLVM: false  # Always keep braces for if/else statements
+InsertBraces: true  # Always insert braces for if/else/for/while statements
 
 # Spacing
 SpaceBeforeCpp11BracedList: true

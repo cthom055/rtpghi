@@ -54,16 +54,16 @@ namespace rtpghi
     {
         // Validation
         if (!input.is_valid())
-            return ErrorCode::INVALID_INPUT;
-        if (!output.is_valid())
-            return ErrorCode::INVALID_OUTPUT;
-        if (input.fft_bins != output.fft_bins)
-            return ErrorCode::SIZE_MISMATCH;
-
-        // Copy magnitudes (pass-through for now)
-        for (size_t i = 0; i < input.fft_bins; ++i)
         {
-            output.magnitudes[i] = input.magnitudes[i];
+            return ErrorCode::INVALID_INPUT;
+        }
+        if (!output.is_valid())
+        {
+            return ErrorCode::INVALID_OUTPUT;
+        }
+        if (input.fft_bins != output.fft_bins)
+        {
+            return ErrorCode::SIZE_MISMATCH;
         }
 
         // TODO: Implement RTPGHI phase propagation algorithm
