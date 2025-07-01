@@ -1,0 +1,16 @@
+# Markdownlint configuration for RTPGHI project
+
+# MD013 - Line length
+MD013:
+  # Allow longer lines for technical documentation
+  line_length: 120
+  # Don't count code blocks and tables
+  code_blocks: false
+  tables: false
+  headers: false
+
+# MD033 - Allow inline HTML for better documentation
+MD033: false
+
+# MD041 - First line in file should be a top level header
+MD041: false

@@ -1,7 +1,8 @@
 # RTPGHI - Real-Time Phase Gradient Heap Integration
 
-A modern C++ implementation of the RTPGHI algorithm for phase vocoding, as
-described in "Phase Vocoder Done Right" by Průša & Holighaus (2017).
+A modern & lightweight C++ implementation of the RTPGHI algorithm for phase vocoding, as
+described in "Phase Vocoder Done Right" by Průša & Holighaus (2017). This is written with
+real-time audio processing in mind, providing a header-only library that is easy to integrate into existing projects.
 
 ## Overview
 
