@@ -4,6 +4,7 @@
 #include <numeric>
 #include <random>
 #include <rtpghi/rtpghi.hpp>
+#include <tuple>
 #include <vector>
 
 using Catch::Approx;
