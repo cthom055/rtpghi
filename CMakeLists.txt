@@ -24,7 +24,7 @@ if(PROJECT_IS_TOP_LEVEL)
   FetchContent_MakeAvailable(Catch2)
 
   # Test executable
-  add_executable(tests tests/test_basic.cpp)
+  add_executable(tests tests/test_basic.cpp tests/test_rtpghi_algorithm.cpp tests/test_rtpghi_realworld.cpp tests/test_rtpghi_advanced.cpp tests/test_gradients.cpp tests/test_benchmarks.cpp tests/test_heap.cpp tests/test_heap_benchmarks.cpp)
   target_link_libraries(tests PRIVATE rtpghi Catch2::Catch2WithMain)
 
   # Auto-discover tests
@@ -32,7 +32,10 @@ if(PROJECT_IS_TOP_LEVEL)
   include(Catch)
   catch_discover_tests(tests)
 
-  # Example
+  # Examples
   add_executable(example examples/basic_example.cpp)
   target_link_libraries(example rtpghi)
+  
+  add_executable(complete_workflow examples/complete_workflow.cpp)
+  target_link_libraries(complete_workflow rtpghi)
 endif()
