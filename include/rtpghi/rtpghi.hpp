@@ -437,7 +437,7 @@ namespace rtpghi
             {
                 random_seed =
                     (random_seed * constants::LCG_MULTIPLIER + constants::LCG_INCREMENT) & constants::LCG_MASK;
-                output.phases[m] = (random_seed / float(constants::LCG_MASK)) * constants::TWO_PI;
+                output.phases[m] = (static_cast<float>(random_seed) / static_cast<float>(constants::LCG_MASK)) * constants::TWO_PI;
             }
         }
 
