@@ -287,8 +287,9 @@ TEST_CASE("Heap performance benchmarks", "[heap][benchmark]")
 
         BENCHMARK("Custom Heap - Extract Only")
         {
-            return [&data]() {
-                Heap heap(SIZE);
+            // Work around MSVC requiring capture of constexpr variables
+            return [&data, heap_size = SIZE]() {
+                Heap heap(heap_size);
                 for (const auto& entry : data)
                 {
                     heap.insert(entry.bin_index, entry.magnitude);

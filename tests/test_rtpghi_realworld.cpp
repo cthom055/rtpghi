@@ -95,10 +95,10 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
 
         // Set up formant structure
         std::vector<std::tuple<float, float, float>> formants = {
-            { 100.0f, 0.4f, 50.0f },    // F0 (pitch)
-            { 730.0f, 1.0f, 80.0f },    // F1
-            { 1090.0f, 0.8f, 100.0f },  // F2
-            { 2440.0f, 0.6f, 150.0f }   // F3
+            std::make_tuple(100.0f, 0.4f, 50.0f),    // F0 (pitch)
+            std::make_tuple(730.0f, 1.0f, 80.0f),    // F1
+            std::make_tuple(1090.0f, 0.8f, 100.0f),  // F2
+            std::make_tuple(2440.0f, 0.6f, 150.0f)   // F3
         };
 
         for (const auto& formant : formants)
