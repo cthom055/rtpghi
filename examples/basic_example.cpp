@@ -30,15 +30,15 @@ int main()
     const float fundamental = 440.0f;  // A4
     for (size_t i = 0; i < fft_bins; ++i)
     {
-        float freq = i * freq_step;
+        float freq = static_cast<float>(i) * freq_step;
         
         // Add harmonics at multiples of fundamental
         bool is_harmonic = false;
         for (int h = 1; h <= 8; ++h)
         {
-            if (std::abs(freq - h * fundamental) < freq_step / 2)
+            if (std::abs(freq - static_cast<float>(h) * fundamental) < freq_step / 2)
             {
-                magnitudes[i] = 1.0f / h;  // Decreasing harmonic strength
+                magnitudes[i] = 1.0f / static_cast<float>(h);  // Decreasing harmonic strength
                 is_harmonic = true;
                 break;
             }
@@ -138,7 +138,7 @@ int main()
         }
     }
     
-    float peak_freq = peak_bin * freq_step;
+    float peak_freq = static_cast<float>(peak_bin) * freq_step;
     
     std::cout << "         Input harmonics: " << harmonic_bins << " bins\n";
     std::cout << "         Processed bins: " << processed_bins << " bins\n";
@@ -153,7 +153,7 @@ int main()
     {
         if (magnitudes[i] > 0.1f)  // Only show significant bins
         {
-            float freq = i * freq_step;
+            float freq = static_cast<float>(i) * freq_step;
             float phase_change = output_phases[i] - prev_phases[i];
             
             printf("%3zu | %9.1f | %9.3f | %10.3f | %11.6f\n",

@@ -106,7 +106,7 @@ TEST_CASE("Phase Gradient Calculations", "[gradients]")
         // Generate quadratic phase: phase[i] = (i*step)^2
         for (size_t i = 0; i < N; ++i)
         {
-            float x = i * step;
+            float x = static_cast<float>(i) * step;
             phases[i] = x * x;
         }
 
@@ -122,7 +122,7 @@ TEST_CASE("Phase Gradient Calculations", "[gradients]")
         // For middle points, central difference should be most accurate
         // True derivative at x=0.2 is 2*0.2 = 0.4
         size_t mid_point = 2;
-        float x_mid = mid_point * step;
+        float x_mid = static_cast<float>(mid_point) * step;
         float true_derivative = 2.0f * x_mid;
 
         INFO("True derivative at x=" << x_mid << " is " << true_derivative);

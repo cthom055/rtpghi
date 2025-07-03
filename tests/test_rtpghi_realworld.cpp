@@ -173,7 +173,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
         // Simulate broadband transient with exponential decay
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            float freq = i * 22050.0f / fft_bins;  // Up to Nyquist
+            float freq = static_cast<float>(i) * 22050.0f / static_cast<float>(fft_bins);  // Up to Nyquist
             // Transient: high energy that decays exponentially with frequency
             mags[i] = std::exp(-freq / 2000.0f) + 0.01f;  // Exponential decay + noise floor
             // Sharp phase discontinuity typical of transients
@@ -310,7 +310,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
 
         INFO("Processed bins: " << processed_bins);
         // Most bins should be processed by heap algorithm (not random)
-        REQUIRE(processed_bins >= fft_bins * 0.9f);  // At least 90% processed
+        REQUIRE(static_cast<float>(processed_bins) >= static_cast<float>(fft_bins) * 0.9f);  // At least 90% processed
 
         // No cleanup needed with RAII
     }

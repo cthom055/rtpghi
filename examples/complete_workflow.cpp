@@ -8,7 +8,7 @@
 void generate_harmonic_frame(std::vector<float>& magnitudes, std::vector<float>& phases,
                            size_t fft_bins, float time_index, float sample_rate)
 {
-    const float freq_step = sample_rate / (2 * fft_bins);
+    const float freq_step = sample_rate / (2 * static_cast<float>(fft_bins));
     
     // Clear spectrum
     std::fill(magnitudes.begin(), magnitudes.end(), 0.01f);
@@ -18,12 +18,12 @@ void generate_harmonic_frame(std::vector<float>& magnitudes, std::vector<float>&
     const float fundamental = 440.0f;
     for (int harmonic = 1; harmonic <= 5; ++harmonic)
     {
-        float freq = fundamental * harmonic;
+        float freq = fundamental * static_cast<float>(harmonic);
         size_t bin = static_cast<size_t>(freq / freq_step);
         
         if (bin < fft_bins)
         {
-            magnitudes[bin] = 1.0f / harmonic;  // Decreasing amplitude
+            magnitudes[bin] = 1.0f / static_cast<float>(harmonic);  // Decreasing amplitude
             phases[bin] = 2.0f * rtpghi::constants::PI * freq * time_index / sample_rate;
         }
     }
@@ -35,7 +35,7 @@ void demonstrate_integration_methods(size_t fft_bins)
     
     const float sample_rate = 44100.0f;
     const float time_step = 512.0f / sample_rate;
-    const float freq_step = sample_rate / (2 * fft_bins);
+    const float freq_step = sample_rate / (2 * static_cast<float>(fft_bins));
     (void)time_step; // Used in performance calculations later
     (void)freq_step; // Suppress unused variable warning
     
@@ -115,7 +115,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
     
     const float sample_rate = 44100.0f;
     const float time_step = 512.0f / sample_rate;
-    const float freq_step = sample_rate / (2 * fft_bins);
+    const float freq_step = sample_rate / (2 * static_cast<float>(fft_bins));
     
     std::cout << "Parameters:\n";
     std::cout << "- Sample rate: " << sample_rate << " Hz\n";
@@ -149,7 +149,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
         auto frame_start = std::chrono::high_resolution_clock::now();
         
         // Generate frame data
-        generate_harmonic_frame(magnitudes, curr_phases, fft_bins, frame * time_step, sample_rate);
+        generate_harmonic_frame(magnitudes, curr_phases, fft_bins, static_cast<float>(frame) * time_step, sample_rate);
         
         // Calculate gradients
         rtpghi::calculate_time_gradients(
@@ -178,7 +178,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
         
         auto frame_end = std::chrono::high_resolution_clock::now();
         auto frame_duration = std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start);
-        double frame_time = frame_duration.count();
+        double frame_time = static_cast<double>(frame_duration.count());
         
         // Analyze results
         size_t peak_bin = 0;
@@ -198,7 +198,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
             }
         }
         
-        float peak_freq = peak_bin * freq_step;
+        float peak_freq = static_cast<float>(peak_bin) * freq_step;
         
         // Show progress for first few frames and every 10th frame
         if (frame < 5 || frame % 10 == 0)
@@ -218,7 +218,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
     
     std::cout << "\nPerformance Summary:\n";
     std::cout << "- Total time: " << total_duration.count() << " μs\n";
-    std::cout << "- Average per frame: " << total_processing_time / num_frames << " μs\n";
+    std::cout << "- Average per frame: " << total_processing_time / static_cast<double>(num_frames) << " μs\n";
     std::cout << "- Maximum frame time: " << max_frame_time << " μs\n";
     std::cout << "- Real-time budget: " << static_cast<double>(time_step) * 1e6 << " μs per frame\n";
     

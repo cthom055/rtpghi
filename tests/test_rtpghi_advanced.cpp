@@ -164,7 +164,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
         // Create harmonic content
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            float freq = i * 22050.0f / fft_bins;
+            float freq = static_cast<float>(i) * 22050.0f / static_cast<float>(fft_bins);
             mags[i] = (i % 10 == 0 && i > 0) ? 0.8f : 0.05f;  // Harmonics every 10 bins
             prev_phases[i] = 0.0f;
             time_grad[i] = 2.0f * pi * freq * pitch_ratio / 44100.0f;  // Pitch shifted gradients
@@ -215,7 +215,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
         // Set up smooth phase evolution
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            prev_phases[i] = pi * std::sin(i / 32.0f);
+            prev_phases[i] = pi * std::sin(static_cast<float>(i) / 32.0f);
             time_grad[i] = 0.1f * stretch_ratio;  // Slower evolution
         }
 
@@ -269,7 +269,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
         // Create bandpass filter effect (high in middle, low at edges)
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            float normalized_freq = i / float(fft_bins);
+            float normalized_freq = static_cast<float>(i) / static_cast<float>(fft_bins);
             // Bandpass: peak around 0.3-0.7 of Nyquist
             if (normalized_freq > 0.2f && normalized_freq < 0.8f)
             {
@@ -301,7 +301,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
 
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            float normalized_freq = i / float(fft_bins);
+            float normalized_freq = static_cast<float>(i) / static_cast<float>(fft_bins);
             if (normalized_freq > 0.2f && normalized_freq < 0.8f && mags[i] > 0.5f)
             {
                 passband_bins++;
@@ -341,7 +341,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
             if (i < 20)
             {
                 // Attack portion: rapidly increasing
-                mags[i] = i / 20.0f;
+                mags[i] = static_cast<float>(i) / 20.0f;
                 prev_phases[i] = 0.0f;
                 time_grad[i] = 0.3f;  // Large gradient for transient
                 freq_grad[i] = 0.1f;
@@ -349,8 +349,8 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
             else if (i < 60)
             {
                 // Decay portion: exponentially decreasing
-                mags[i] = std::exp(-(i - 20) * 0.1f);
-                prev_phases[i] = pi * (i - 20) / 40.0f;
+                mags[i] = std::exp(-static_cast<float>(i - 20) * 0.1f);
+                prev_phases[i] = pi * static_cast<float>(i - 20) / 40.0f;
                 time_grad[i] = 0.1f;
                 freq_grad[i] = 0.05f;
             }

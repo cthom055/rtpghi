@@ -306,7 +306,7 @@ TEST_CASE("RTPGHI Performance Benchmarks", "[!benchmark]")
             // Add harmonic content
             for (size_t i = 0; i < fft_bins; ++i)
             {
-                float freq = i * sample_rate / (2 * fft_bins);
+                float freq = static_cast<float>(i) * sample_rate / (2 * static_cast<float>(fft_bins));
                 if (i > 0 && (i % 20 == 0 || i % 33 == 0))
                 {
                     mags[i] = 0.8f * std::exp(-freq / 8000.0f);
@@ -344,7 +344,7 @@ TEST_CASE("RTPGHI Performance Benchmarks", "[!benchmark]")
             // Broadband transient with exponential decay
             for (size_t i = 0; i < fft_bins; ++i)
             {
-                float freq = i * sample_rate / (2 * fft_bins);
+                float freq = static_cast<float>(i) * sample_rate / (2 * static_cast<float>(fft_bins));
                 mags[i] = std::exp(-freq / 2000.0f) + 0.01f;
                 prev_phases[i] = (i % 3 == 0) ? pi : -pi / 2;
                 time_grad[i] = 0.5f * mags[i];
@@ -512,7 +512,7 @@ TEST_CASE("Complete Workflow Performance", "[!benchmark]")
     // Initialize with realistic data
     for (size_t i = 0; i < fft_bins; ++i)
     {
-        float freq = i * freq_step;
+        float freq = static_cast<float>(i) * freq_step;
         magnitudes[i] = (i % 20 == 0) ? 0.8f : 0.05f;
         prev_phases[i] = 2.0f * pi * freq * 0.01f;
         curr_phases[i] = 2.0f * pi * freq * 0.02f;
