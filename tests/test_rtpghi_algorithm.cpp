@@ -345,8 +345,8 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
         {
             size_t i = test_bins[idx];
             mags[i] = 1.0f;  // High magnitude (significant)
-            prev_phases[i] = 0.1f * i;
-            time_grad[i] = 0.05f * (i + 1);  // Varying time gradients
+            prev_phases[i] = 0.1f * static_cast<float>(i);
+            time_grad[i] = 0.05f * static_cast<float>(i + 1);  // Varying time gradients
         }
 
         // Create processor
@@ -401,9 +401,9 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
         {
             size_t i = test_bins[idx];
             mags[i] = 1.0f;  // High magnitude (significant)
-            prev_phases[i] = 0.1f * i;
-            prev_time_grad[i] = 0.03f * (i + 1);  // Previous time gradients
-            time_grad[i] = 0.07f * (i + 1);       // Current time gradients (different from previous)
+            prev_phases[i] = 0.1f * static_cast<float>(i);
+            prev_time_grad[i] = 0.03f * static_cast<float>(i + 1);  // Previous time gradients
+            time_grad[i] = 0.07f * static_cast<float>(i + 1);       // Current time gradients (different from previous)
         }
 
         // Create processor configured for trapezoidal integration
@@ -547,7 +547,7 @@ TEST_CASE("RTPGHI Complex Algorithm Scenarios", "[algorithm][failing][complex]")
         // Frequency gradients that vary across spectrum
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            freq_grad[i] = 0.02f * std::sin(2.0f * 3.14159f * i / fft_bins);
+            freq_grad[i] = 0.02f * std::sin(2.0f * 3.14159f * static_cast<float>(i) / static_cast<float>(fft_bins));
         }
 
         // Create processor

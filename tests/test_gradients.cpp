@@ -217,7 +217,7 @@ TEST_CASE("Frequency Gradient Calculations", "[gradients][frequency]")
         // Generate sinusoidal phase pattern
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            phases[i] = 0.5f * std::sin(2.0f * 3.14159f * i / fft_bins);
+            phases[i] = 0.5f * std::sin(2.0f * 3.14159f * static_cast<float>(i) / static_cast<float>(fft_bins));
         }
 
         REQUIRE(rtpghi::calculate_freq_gradients(phases.data(), fft_bins, freq_step,

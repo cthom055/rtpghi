@@ -113,7 +113,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
             // Create formant with realistic bandwidth
             for (size_t i = 0; i < bw_bins && center_bin + i < fft_bins; ++i)
             {
-                float decay = std::exp(-0.1f * i);  // Exponential decay from center
+                float decay = std::exp(-0.1f * static_cast<float>(i));  // Exponential decay from center
                 if (center_bin + i < fft_bins)
                 {
                     mags[center_bin + i] = amplitude * decay;
@@ -516,9 +516,9 @@ TEST_CASE("RTPGHI Edge Cases and Boundary Conditions", "[edge][comprehensive]")
         for (size_t i = 0; i < fft_bins; ++i)
         {
             mags[i] = 1.0f;
-            prev_phases[i] = 1e-7f * i;  // Very small phases
+            prev_phases[i] = 1e-7f * static_cast<float>(i);  // Very small phases
             time_grad[i] = 1e-8f;        // Very small time gradient
-            freq_grad[i] = 1e-9f * i;    // Very small frequency gradient
+            freq_grad[i] = 1e-9f * static_cast<float>(i);    // Very small frequency gradient
         }
 
         // Create processor
