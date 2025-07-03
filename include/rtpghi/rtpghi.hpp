@@ -263,7 +263,7 @@ namespace rtpghi
 
         void fill(bool value) noexcept
         {
-            std::fill(m_storage.begin(), m_storage.end(), value ? 1 : 0);
+            std::fill(m_storage.begin(), m_storage.end(), value ? static_cast<char>(1) : static_cast<char>(0));
         }
 
         char* data() noexcept
