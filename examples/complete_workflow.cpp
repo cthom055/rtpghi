@@ -36,6 +36,8 @@ void demonstrate_integration_methods(size_t fft_bins)
     const float sample_rate = 44100.0f;
     const float time_step = 512.0f / sample_rate;
     const float freq_step = sample_rate / (2 * fft_bins);
+    (void)time_step; // Used in performance calculations later
+    (void)freq_step; // Suppress unused variable warning
     
     // Prepare test data
     std::vector<float> magnitudes(fft_bins, 1.0f);
@@ -97,8 +99,8 @@ void demonstrate_integration_methods(size_t fft_bins)
     {
         float diff = trap_phases[i] - euler_phases[i];
         printf("%3zu | %9.3f | %9.3f | %12.6f | %11.6f | %9.6f\n",
-               i, prev_time_grad[i], curr_time_grad[i],
-               euler_phases[i], trap_phases[i], diff);
+               i, static_cast<double>(prev_time_grad[i]), static_cast<double>(curr_time_grad[i]),
+               static_cast<double>(euler_phases[i]), static_cast<double>(trap_phases[i]), static_cast<double>(diff));
     }
     
     std::cout << "\nPerformance:\n";
@@ -117,7 +119,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
     
     std::cout << "Parameters:\n";
     std::cout << "- Sample rate: " << sample_rate << " Hz\n";
-    std::cout << "- Time step: " << time_step * 1000 << " ms\n";
+    std::cout << "- Time step: " << static_cast<double>(time_step * 1000) << " ms\n";
     std::cout << "- Frequency step: " << freq_step << " Hz\n";
     std::cout << "- Processing " << num_frames << " frames\n\n";
     
@@ -202,7 +204,7 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
         if (frame < 5 || frame % 10 == 0)
         {
             printf("%5zu | %9.1f | %15.1f | %16zu\n",
-                   frame, peak_freq, frame_time, significant_bins);
+                   frame, static_cast<double>(peak_freq), static_cast<double>(frame_time), significant_bins);
         }
         
         // Update for next iteration
@@ -218,14 +220,14 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
     std::cout << "- Total time: " << total_duration.count() << " μs\n";
     std::cout << "- Average per frame: " << total_processing_time / num_frames << " μs\n";
     std::cout << "- Maximum frame time: " << max_frame_time << " μs\n";
-    std::cout << "- Real-time budget: " << time_step * 1e6 << " μs per frame\n";
+    std::cout << "- Real-time budget: " << static_cast<double>(time_step) * 1e6 << " μs per frame\n";
     
-    bool realtime_capable = max_frame_time < (time_step * 1e6);
+    bool realtime_capable = max_frame_time < (static_cast<double>(time_step) * 1e6);
     std::cout << "- Real-time capable: " << (realtime_capable ? "YES" : "NO") << "\n";
     
     if (realtime_capable)
     {
-        double cpu_usage = (max_frame_time / (time_step * 1e6)) * 100.0;
+        double cpu_usage = (max_frame_time / (static_cast<double>(time_step) * 1e6)) * 100.0;
         std::cout << "- CPU usage: " << cpu_usage << "%\n";
     }
 }

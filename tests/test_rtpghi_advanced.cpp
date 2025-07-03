@@ -189,7 +189,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
             if (mags[i] > 0.5f)
             {
                 harmonic_bins++;
-                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6));
+                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6f));
             }
         }
 
@@ -306,13 +306,13 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
             {
                 passband_bins++;
                 // Passband: should be processed by time integration
-                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6));
+                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6f));
             }
             else if (mags[i] <= 0.02f)
             {
                 stopband_bins++;
                 // Stopband: should get random phase
-                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6));
+                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6f));
             }
         }
 
@@ -382,7 +382,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
 
         for (size_t i = 0; i < 20; ++i)
         {
-            if (output.magnitudes[i] != Approx(mags[i]).epsilon(1e-6))
+            if (output.magnitudes[i] != Approx(mags[i]).epsilon(1e-6f))
             {
                 attack_processed = false;
             }
@@ -390,7 +390,7 @@ TEST_CASE("RTPGHI Audio Processing Patterns", "[audio][patterns]")
 
         for (size_t i = 20; i < 60; ++i)
         {
-            if (output.magnitudes[i] != Approx(mags[i]).epsilon(1e-6))
+            if (output.magnitudes[i] != Approx(mags[i]).epsilon(1e-6f))
             {
                 decay_processed = false;
             }
@@ -491,7 +491,6 @@ TEST_CASE("RTPGHI Robustness and Error Handling", "[robustness][error]")
     SECTION("Zero-length input edge case")
     {
         const size_t fft_bins = 0;
-        float dummy_data = 0.0f;
 
         // For zero-length input, our constructor will throw an exception
         // This is the expected behavior with modern RAII design

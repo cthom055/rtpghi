@@ -157,7 +157,7 @@ int main()
             float phase_change = output_phases[i] - prev_phases[i];
             
             printf("%3zu | %9.1f | %9.3f | %10.3f | %11.6f\n",
-                   i, freq, magnitudes[i], output_mags[i], phase_change);
+                   i, static_cast<double>(freq), static_cast<double>(magnitudes[i]), static_cast<double>(output_mags[i]), static_cast<double>(phase_change));
         }
     }
 

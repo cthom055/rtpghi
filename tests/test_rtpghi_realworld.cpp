@@ -70,7 +70,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
             {
                 INFO("Checking harmonic at " << harmonic.first << " Hz (bin " << bin << ")");
                 // High-magnitude bins should be processed by time integration, not random phase
-                REQUIRE(output.magnitudes[bin] == Approx(harmonic.second).epsilon(1e-6));
+                REQUIRE(output.magnitudes[bin] == Approx(harmonic.second).epsilon(1e-6f));
                 // Phase should be within reasonable range
                 REQUIRE(output.phases[bin] >= -pi);
                 REQUIRE(output.phases[bin] <= 2 * pi);
@@ -204,7 +204,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
             {  // High energy bins
                 high_energy_bins++;
                 // Should maintain magnitude
-                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6));
+                REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6f));
                 // Phase should be processed (not random)
                 REQUIRE(std::abs(output.phases[i]) <= pi + 0.1f);  // Allow some tolerance
             }
@@ -249,7 +249,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
             REQUIRE(output.phases[i] >= -pi - 0.1f);
             REQUIRE(output.phases[i] <= pi + 0.1f);
             // Count non-zero phases (random phases shouldn't all be zero)
-            if (std::abs(output.phases[i]) > 1e-6)
+            if (std::abs(output.phases[i]) > 1e-6f)
             {
                 non_zero_phases++;
             }
@@ -300,7 +300,7 @@ TEST_CASE("RTPGHI Real-World Audio Scenarios", "[realworld][comprehensive]")
         size_t processed_bins = 0;
         for (size_t i = 0; i < fft_bins; ++i)
         {
-            REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6));
+            REQUIRE(output.magnitudes[i] == Approx(mags[i]).epsilon(1e-6f));
             // Verify phase is processed (not random)
             if (output.phases[i] >= -pi - 0.1f && output.phases[i] <= pi + 0.1f)
             {
@@ -346,7 +346,7 @@ TEST_CASE("RTPGHI Edge Cases and Boundary Conditions", "[edge][comprehensive]")
         // Should be time integrated: pi/4 + 0.2
         float expected = pi / 4 + 0.2f;
         expected = expected - 2.0f * pi * std::round(expected / (2.0f * pi));
-        REQUIRE(output.phases[0] == Approx(expected).epsilon(1e-6));
+        REQUIRE(output.phases[0] == Approx(expected).epsilon(1e-6f));
 
         // No cleanup needed with RAII
     }
@@ -388,7 +388,7 @@ TEST_CASE("RTPGHI Edge Cases and Boundary Conditions", "[edge][comprehensive]")
             if (mags[i] > 1.0f)
             {  // Peak bins
                 processed_bins++;
-                REQUIRE(output.phases[i] == Approx(0.01f).epsilon(1e-6));
+                REQUIRE(output.phases[i] == Approx(0.01f).epsilon(1e-6f));
             }
         }
 
@@ -478,9 +478,9 @@ TEST_CASE("RTPGHI Edge Cases and Boundary Conditions", "[edge][comprehensive]")
         REQUIRE(processor.process(input, output) == rtpghi::ErrorCode::OK);
 
         // Very loud bins should be processed by time integration
-        REQUIRE(output.phases[32] == Approx(0.1f).epsilon(1e-6));
-        REQUIRE(output.phases[16] == Approx(0.1f).epsilon(1e-6));
-        REQUIRE(output.phases[48] == Approx(0.1f).epsilon(1e-6));
+        REQUIRE(output.phases[32] == Approx(0.1f).epsilon(1e-6f));
+        REQUIRE(output.phases[16] == Approx(0.1f).epsilon(1e-6f));
+        REQUIRE(output.phases[48] == Approx(0.1f).epsilon(1e-6f));
 
         // Very quiet bins should get random phase
         bool has_random_phases = false;
@@ -488,7 +488,7 @@ TEST_CASE("RTPGHI Edge Cases and Boundary Conditions", "[edge][comprehensive]")
         {
             if (i != 32 && i != 16 && i != 48)
             {
-                if (output.phases[i] != Approx(0.1f).epsilon(1e-6))
+                if (output.phases[i] != Approx(0.1f).epsilon(1e-6f))
                 {
                     has_random_phases = true;
                     REQUIRE(output.phases[i] >= -pi - 0.1f);

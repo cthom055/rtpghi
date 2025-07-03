@@ -45,7 +45,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
 
         // FAILING: Algorithm should process high-magnitude bins first
         // The peak bin (15) should have phase = prev_phase[15] + time_grad[15] = 0 + 0.1 = 0.1
-        REQUIRE(out_phases[15] == Approx(0.1f).epsilon(1e-6));
+        REQUIRE(out_phases[15] == Approx(0.1f).epsilon(1e-6f));
 
         // FAILING: Frequency propagation should spread from peak to neighbors
         // Neighbors should get phases propagated from the peak using freq gradients
@@ -68,7 +68,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
 
         // Create magnitude distribution: max = 1.0, some below tolerance
         float max_mag = 1.0f;
-        float abs_tolerance = tolerance * max_mag;  // 1e-6
+        float abs_tolerance = tolerance * max_mag;  // 1e-6f
 
         for (size_t i = 0; i < fft_bins; ++i)
         {
@@ -103,7 +103,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
         for (size_t i = 20; i < fft_bins; ++i)
         {
             INFO("Bin " << i << " is below tolerance, should have random phase");
-            REQUIRE(out_phases[i] != Approx(0.1f).epsilon(1e-6));  // Should not be time gradient result
+            REQUIRE(out_phases[i] != Approx(0.1f).epsilon(1e-6f));  // Should not be time gradient result
         }
         
         // No cleanup needed with RAII
@@ -150,7 +150,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
         REQUIRE(processor.process(input, output) == rtpghi::ErrorCode::OK);
 
         // Check that high-magnitude bin (16) gets time integration
-        REQUIRE(out_phases[16] == Approx(0.1f).epsilon(1e-6));
+        REQUIRE(out_phases[16] == Approx(0.1f).epsilon(1e-6f));
 
         // Check frequency propagation to adjacent significant bins
         float expected_15 = out_phases[16] - freq_grad[16];  // Downward propagation
@@ -256,7 +256,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
             size_t bin = pair.first;
             float expected_phase = prev_phases[bin] + time_grad[bin];
             INFO("High-magnitude bin " << bin << " should be processed with time integration");
-            REQUIRE(out_phases[bin] == Approx(expected_phase).epsilon(1e-6));
+            REQUIRE(out_phases[bin] == Approx(expected_phase).epsilon(1e-6f));
         }
         
         // No cleanup needed with RAII
@@ -307,14 +307,14 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
             REQUIRE(out_phases[i] >= -pi);
             REQUIRE(out_phases[i] <= pi);
             // Should NOT be the simple time gradient result
-            REQUIRE(out_phases[i] != Approx(0.1f).epsilon(1e-6));
+            REQUIRE(out_phases[i] != Approx(0.1f).epsilon(1e-6f));
         }
 
         // Verify random phases are actually different (not all the same)
         bool phases_differ = false;
         for (size_t i = 4; i < fft_bins; ++i)
         {
-            if (std::abs(out_phases[i] - out_phases[3]) > 1e-6)
+            if (std::abs(out_phases[i] - out_phases[3]) > 1e-6f)
             {
                 phases_differ = true;
                 break;
@@ -373,7 +373,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
             INFO("Wrapped result: " << wrapped_result);
             INFO("Actual result: " << out_phases[i]);
 
-            REQUIRE(out_phases[i] == Approx(wrapped_result).epsilon(1e-6));
+            REQUIRE(out_phases[i] == Approx(wrapped_result).epsilon(1e-6f));
         }
         
         // No cleanup needed with RAII
@@ -437,7 +437,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
             INFO("Wrapped result: " << wrapped_result);
             INFO("Actual result: " << out_phases[i]);
 
-            REQUIRE(out_phases[i] == Approx(wrapped_result).epsilon(1e-6));
+            REQUIRE(out_phases[i] == Approx(wrapped_result).epsilon(1e-6f));
         }
         
         // No cleanup needed with RAII
@@ -514,7 +514,7 @@ TEST_CASE("RTPGHI Phase Propagation Algorithm", "[algorithm][failing]")
         // This affects the final phase values due to different propagation paths
 
         // Bin 8 should be processed first with time integration (0 + 0 = 0)
-        REQUIRE(out_phases[8] == Approx(0.0f).epsilon(1e-6));
+        REQUIRE(out_phases[8] == Approx(0.0f).epsilon(1e-6f));
 
         // Bin 24 should be processed after bin 8, but current implementation doesn't show this
         // In real RTPGHI, the processing order would affect neighboring bins differently
@@ -564,9 +564,9 @@ TEST_CASE("RTPGHI Complex Algorithm Scenarios", "[algorithm][failing][complex]")
 
         // FAILING: Multiple peaks should create different propagation patterns
         // Phase at each peak should reflect time integration
-        REQUIRE(out_phases[10] == Approx(0.05f).epsilon(1e-6));  // Highest peak processed first
-        REQUIRE(out_phases[30] == Approx(0.05f).epsilon(1e-6));  // Second peak
-        REQUIRE(out_phases[50] == Approx(0.05f).epsilon(1e-6));  // Third peak
+        REQUIRE(out_phases[10] == Approx(0.05f).epsilon(1e-6f));  // Highest peak processed first
+        REQUIRE(out_phases[30] == Approx(0.05f).epsilon(1e-6f));  // Second peak
+        REQUIRE(out_phases[50] == Approx(0.05f).epsilon(1e-6f));  // Third peak
 
         // FAILING: Regions between peaks should show frequency propagation effects
         // This will fail because current implementation doesn't do inter-peak propagation
@@ -681,7 +681,7 @@ TEST_CASE("RTPGHI Complex Algorithm Scenarios", "[algorithm][failing][complex]")
             if (i != fft_bins / 2)
             {  // Not the peak bin
                 INFO("Bin " << i << " magnitude " << mags[i] << " is below tolerance");
-                REQUIRE(out_phases[i] != Approx(0.1f).epsilon(1e-6));  // Should not be time gradient
+                REQUIRE(out_phases[i] != Approx(0.1f).epsilon(1e-6f));  // Should not be time gradient
             }
         }
         

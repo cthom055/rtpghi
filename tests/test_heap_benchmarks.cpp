@@ -503,7 +503,6 @@ TEST_CASE("Heap memory allocation analysis", "[heap][memory]")
             }
             
             size_t pq_allocations = AllocationTracker::get_allocation_count();
-            size_t pq_deallocations = AllocationTracker::get_deallocation_count();
             size_t pq_bytes = AllocationTracker::get_total_bytes_allocated();
             
             // std::priority_queue should have multiple allocations for dynamic resizing

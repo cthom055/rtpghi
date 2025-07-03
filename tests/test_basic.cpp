@@ -137,33 +137,33 @@ TEST_CASE("RTPGHI basic functionality", "[core]")
 
     SECTION("Processor API")
     {
-        const size_t fft_bins = 256;
+        const size_t processor_fft_bins = 256;
         
         // Create processor with configuration
-        rtpghi::ProcessorConfig config(fft_bins, 1e-5f, 42);
+        rtpghi::ProcessorConfig config(processor_fft_bins, 1e-5f, 42);
         rtpghi::Processor processor(config);
         
-        REQUIRE(processor.config().fft_bins == fft_bins);
+        REQUIRE(processor.config().fft_bins == processor_fft_bins);
         REQUIRE(processor.config().tolerance == 1e-5f);
         REQUIRE(processor.config().initial_random_seed == 42);
         
         // Test processing with plan
-        std::vector<float> mags(fft_bins, 1.0f);
-        std::vector<float> prev_phases(fft_bins, 0.0f);
-        std::vector<float> time_grad(fft_bins, 0.1f);
-        std::vector<float> freq_grad(fft_bins, 0.0f);
-        std::vector<float> out_mags(fft_bins);
-        std::vector<float> out_phases(fft_bins);
+        std::vector<float> mags(processor_fft_bins, 1.0f);
+        std::vector<float> prev_phases(processor_fft_bins, 0.0f);
+        std::vector<float> time_grad(processor_fft_bins, 0.1f);
+        std::vector<float> freq_grad(processor_fft_bins, 0.0f);
+        std::vector<float> out_mags(processor_fft_bins);
+        std::vector<float> out_phases(processor_fft_bins);
 
         rtpghi::FrameInput input { mags.data(), prev_phases.data(),
                                    time_grad.data(), freq_grad.data(),
-                                   nullptr, fft_bins,  };
-        rtpghi::FrameOutput output { out_mags.data(), out_phases.data(), fft_bins };
+                                   nullptr, processor_fft_bins,  };
+        rtpghi::FrameOutput output { out_mags.data(), out_phases.data(), processor_fft_bins };
 
         REQUIRE(processor.process(input, output) == rtpghi::ErrorCode::OK);
         
         // Verify results
-        for (size_t i = 0; i < fft_bins; ++i)
+        for (size_t i = 0; i < processor_fft_bins; ++i)
         {
             REQUIRE(out_mags[i] == 1.0f);
             REQUIRE(out_phases[i] == 0.1f);

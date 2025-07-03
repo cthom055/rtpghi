@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 #include <vector>
 
@@ -560,7 +561,7 @@ namespace rtpghi
                                               const float* curr_phases,
                                               size_t fft_bins,
                                               float time_step,
-                                              GradientMethod method,
+                                              GradientMethod /* method */,
                                               float* output_gradients)
     {
         if (!prev_phases || !curr_phases || !output_gradients || fft_bins == 0 || time_step <= 0)
