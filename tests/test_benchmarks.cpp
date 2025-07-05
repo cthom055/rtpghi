@@ -1,6 +1,7 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <cmath>
+#include <complex>
 #include <random>
 #include <rtpghi/rtpghi.hpp>
 #include <vector>
@@ -125,31 +126,55 @@ TEST_CASE("RTPGHI Performance Benchmarks", "[!benchmark]")
 
     SECTION("Gradient Calculation Methods")
     {
-        const size_t size = 1024;
-        std::vector<float> phases(size);
-        std::vector<float> gradients(size);
+        const size_t num_frames = 1024;
+        const size_t fft_bins = 1;
+        std::vector<float> phases(num_frames);
+        std::vector<float> time_gradients(num_frames * fft_bins);
+        std::vector<float> freq_gradients(num_frames * fft_bins);
 
-        for (size_t i = 0; i < size; ++i)
+        for (size_t i = 0; i < num_frames; ++i)
         {
             phases[i] = phase_dist(rng);
         }
 
+        // Convert phases to complex spectrum format
+        std::vector<std::vector<std::complex<float>>> spectra(num_frames);
+        for (size_t frame = 0; frame < num_frames; ++frame)
+        {
+            spectra[frame].resize(fft_bins);
+            spectra[frame][0] = std::polar(1.0f, phases[frame]);
+        }
+
+        rtpghi::GradientOutput output{
+            time_gradients.data(),
+            freq_gradients.data(),
+            num_frames,
+            num_frames,
+            fft_bins
+        };
+
         BENCHMARK("Gradient Forward Difference 1024")
         {
-            rtpghi::GradientInput input { phases.data(), size, 1.0f, rtpghi::GradientMethod::FORWARD };
-            return rtpghi::calculate_gradients(input, gradients.data());
+            return rtpghi::calculate_spectrum_gradients(
+                spectra, 1.0f, 1.0f, output,
+                rtpghi::GradientMethod::FORWARD, rtpghi::GradientMethod::CENTRAL
+            );
         };
 
         BENCHMARK("Gradient Backward Difference 1024")
         {
-            rtpghi::GradientInput input { phases.data(), size, 1.0f, rtpghi::GradientMethod::BACKWARD };
-            return rtpghi::calculate_gradients(input, gradients.data());
+            return rtpghi::calculate_spectrum_gradients(
+                spectra, 1.0f, 1.0f, output,
+                rtpghi::GradientMethod::BACKWARD, rtpghi::GradientMethod::CENTRAL
+            );
         };
 
         BENCHMARK("Gradient Central Difference 1024")
         {
-            rtpghi::GradientInput input { phases.data(), size, 1.0f, rtpghi::GradientMethod::CENTRAL };
-            return rtpghi::calculate_gradients(input, gradients.data());
+            return rtpghi::calculate_spectrum_gradients(
+                spectra, 1.0f, 1.0f, output,
+                rtpghi::GradientMethod::CENTRAL, rtpghi::GradientMethod::CENTRAL
+            );
         };
     }
 
@@ -410,144 +435,109 @@ TEST_CASE("Gradient Calculation Scaling", "[!benchmark]")
         // Small size
         BENCHMARK("Gradient 128 bins")
         {
-            const size_t size = 128;
-            std::vector<float> phases(size);
-            std::vector<float> gradients(size);
+            const size_t num_frames = 128;
+            const size_t fft_bins = 1;
+            std::vector<float> phases(num_frames);
+            std::vector<float> time_gradients(num_frames * fft_bins);
+            std::vector<float> freq_gradients(num_frames * fft_bins);
             
-            for (size_t i = 0; i < size; ++i)
+            for (size_t i = 0; i < num_frames; ++i)
             {
                 phases[i] = phase_dist(rng);
             }
             
-            rtpghi::GradientInput input { phases.data(), size, 1.0f, rtpghi::GradientMethod::CENTRAL };
-            return rtpghi::calculate_gradients(input, gradients.data());
+            // Convert phases to complex spectrum format
+            std::vector<std::vector<std::complex<float>>> spectra(num_frames);
+            for (size_t frame = 0; frame < num_frames; ++frame)
+            {
+                spectra[frame].resize(fft_bins);
+                spectra[frame][0] = std::polar(1.0f, phases[frame]);
+            }
+
+            rtpghi::GradientOutput output{
+                time_gradients.data(),
+                freq_gradients.data(),
+                num_frames,
+                num_frames,
+                fft_bins
+            };
+            
+            return rtpghi::calculate_spectrum_gradients(
+                spectra, 1.0f, 1.0f, output,
+                rtpghi::GradientMethod::CENTRAL, rtpghi::GradientMethod::CENTRAL
+            );
         };
 
         // Medium size
         BENCHMARK("Gradient 512 bins")
         {
-            const size_t size = 512;
-            std::vector<float> phases(size);
-            std::vector<float> gradients(size);
+            const size_t num_frames = 512;
+            const size_t fft_bins = 1;
+            std::vector<float> phases(num_frames);
+            std::vector<float> time_gradients(num_frames * fft_bins);
+            std::vector<float> freq_gradients(num_frames * fft_bins);
             
-            for (size_t i = 0; i < size; ++i)
+            for (size_t i = 0; i < num_frames; ++i)
             {
                 phases[i] = phase_dist(rng);
             }
             
-            rtpghi::GradientInput input { phases.data(), size, 1.0f, rtpghi::GradientMethod::CENTRAL };
-            return rtpghi::calculate_gradients(input, gradients.data());
+            // Convert phases to complex spectrum format
+            std::vector<std::vector<std::complex<float>>> spectra(num_frames);
+            for (size_t frame = 0; frame < num_frames; ++frame)
+            {
+                spectra[frame].resize(fft_bins);
+                spectra[frame][0] = std::polar(1.0f, phases[frame]);
+            }
+
+            rtpghi::GradientOutput output{
+                time_gradients.data(),
+                freq_gradients.data(),
+                num_frames,
+                num_frames,
+                fft_bins
+            };
+            
+            return rtpghi::calculate_spectrum_gradients(
+                spectra, 1.0f, 1.0f, output,
+                rtpghi::GradientMethod::CENTRAL, rtpghi::GradientMethod::CENTRAL
+            );
         };
 
         // Large size
         BENCHMARK("Gradient 2048 bins")
         {
-            const size_t size = 2048;
-            std::vector<float> phases(size);
-            std::vector<float> gradients(size);
+            const size_t num_frames = 2048;
+            const size_t fft_bins = 1;
+            std::vector<float> phases(num_frames);
+            std::vector<float> time_gradients(num_frames * fft_bins);
+            std::vector<float> freq_gradients(num_frames * fft_bins);
             
-            for (size_t i = 0; i < size; ++i)
+            for (size_t i = 0; i < num_frames; ++i)
             {
                 phases[i] = phase_dist(rng);
             }
             
-            rtpghi::GradientInput input { phases.data(), size, 1.0f, rtpghi::GradientMethod::CENTRAL };
-            return rtpghi::calculate_gradients(input, gradients.data());
-        };
-    }
-}
+            // Convert phases to complex spectrum format
+            std::vector<std::vector<std::complex<float>>> spectra(num_frames);
+            for (size_t frame = 0; frame < num_frames; ++frame)
+            {
+                spectra[frame].resize(fft_bins);
+                spectra[frame][0] = std::polar(1.0f, phases[frame]);
+            }
 
-TEST_CASE("Time vs Frequency Gradient Performance", "[!benchmark]")
-{
-    const size_t fft_bins = 513;
-    const float pi = 3.14159265359f;
-    std::mt19937 rng(99999);
-    std::uniform_real_distribution<float> phase_dist(-pi, pi);
-
-    std::vector<float> prev_phases(fft_bins);
-    std::vector<float> curr_phases(fft_bins);
-    std::vector<float> gradients(fft_bins);
-
-    for (size_t i = 0; i < fft_bins; ++i)
-    {
-        prev_phases[i] = phase_dist(rng);
-        curr_phases[i] = phase_dist(rng);
-    }
-
-    SECTION("Time vs Frequency gradient comparison")
-    {
-        BENCHMARK("Time Gradients (between frames)")
-        {
-            return rtpghi::calculate_time_gradients(prev_phases.data(), curr_phases.data(),
-                                                   fft_bins, 0.01f, 
-                                                   rtpghi::GradientMethod::FORWARD,
-                                                   gradients.data());
-        };
-
-        BENCHMARK("Frequency Gradients (within frame)")
-        {
-            return rtpghi::calculate_freq_gradients(curr_phases.data(), fft_bins, 100.0f,
-                                                   rtpghi::GradientMethod::CENTRAL,
-                                                   gradients.data());
-        };
-    }
-}
-
-TEST_CASE("Complete Workflow Performance", "[!benchmark]")
-{
-    const size_t fft_bins = 513;
-    const float sample_rate = 44100.0f;
-    const float time_step = 512.0f / sample_rate;
-    const float freq_step = sample_rate / (2 * fft_bins);
-    const float pi = 3.14159265359f;
-
-    std::vector<float> magnitudes(fft_bins);
-    std::vector<float> prev_phases(fft_bins);
-    std::vector<float> curr_phases(fft_bins);
-    std::vector<float> time_grad(fft_bins);
-    std::vector<float> freq_grad(fft_bins);
-    std::vector<float> out_mags(fft_bins);
-    std::vector<float> out_phases(fft_bins);
-
-    // Initialize with realistic data
-    for (size_t i = 0; i < fft_bins; ++i)
-    {
-        float freq = static_cast<float>(i) * freq_step;
-        magnitudes[i] = (i % 20 == 0) ? 0.8f : 0.05f;
-        prev_phases[i] = 2.0f * pi * freq * 0.01f;
-        curr_phases[i] = 2.0f * pi * freq * 0.02f;
-    }
-
-    SECTION("Complete spectrogram-to-RTPGHI workflow")
-    {
-        BENCHMARK("Complete Workflow")
-        {
-            // Step 1: Calculate time gradients
-            rtpghi::calculate_time_gradients(prev_phases.data(), curr_phases.data(),
-                                           fft_bins, time_step, 
-                                           rtpghi::GradientMethod::FORWARD,
-                                           time_grad.data());
-
-            // Step 2: Calculate frequency gradients
-            rtpghi::calculate_freq_gradients(curr_phases.data(), fft_bins, freq_step,
-                                           rtpghi::GradientMethod::CENTRAL,
-                                           freq_grad.data());
-
-            // Step 3: Apply RTPGHI
-            // Create processor outside timed section
-            rtpghi::ProcessorConfig config(fft_bins);
-            rtpghi::Processor processor(config);
+            rtpghi::GradientOutput output{
+                time_gradients.data(),
+                freq_gradients.data(),
+                num_frames,
+                num_frames,
+                fft_bins
+            };
             
-            rtpghi::FrameInput input { magnitudes.data(), prev_phases.data(),
-                                      time_grad.data(), freq_grad.data(),
-                                      nullptr, fft_bins };
-            rtpghi::FrameOutput output { out_mags.data(), out_phases.data(), fft_bins };
-            
-            auto result = processor.process(input, output);
-            
-            // No cleanup needed with RAII
-            
-            return result;
+            return rtpghi::calculate_spectrum_gradients(
+                spectra, 1.0f, 1.0f, output,
+                rtpghi::GradientMethod::CENTRAL, rtpghi::GradientMethod::CENTRAL
+            );
         };
     }
 }

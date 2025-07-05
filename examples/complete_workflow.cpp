@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cmath>
+#include <complex>
 #include <iostream>
 #include <rtpghi/rtpghi.hpp>
 #include <vector>
@@ -66,7 +67,8 @@ void demonstrate_integration_methods(size_t fft_bins)
         euler_mags.data(), euler_phases.data(), fft_bins
     };
     
-    euler_processor.process(euler_input, euler_output);
+    auto euler_result = euler_processor.process(euler_input, euler_output);
+    if (euler_result != rtpghi::ErrorCode::OK) { return; }
     auto euler_time = std::chrono::high_resolution_clock::now();
     
     // Test Trapezoidal
@@ -84,7 +86,8 @@ void demonstrate_integration_methods(size_t fft_bins)
         trap_mags.data(), trap_phases.data(), fft_bins
     };
     
-    trap_processor.process(trap_input, trap_output);
+    auto trap_result = trap_processor.process(trap_input, trap_output);
+    if (trap_result != rtpghi::ErrorCode::OK) { return; }
     auto trap_time = std::chrono::high_resolution_clock::now();
     
     // Calculate timing
@@ -151,18 +154,31 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
         // Generate frame data
         generate_harmonic_frame(magnitudes, curr_phases, fft_bins, static_cast<float>(frame) * time_step, sample_rate);
         
-        // Calculate gradients
-        rtpghi::calculate_time_gradients(
-            prev_phases.data(), curr_phases.data(), fft_bins,
-            time_step, rtpghi::GradientMethod::FORWARD,
-            time_grad.data()
-        );
+        // Calculate gradients using enhanced API
+        std::vector<std::vector<std::complex<float>>> frame_spectra(2);
+        frame_spectra[0].resize(fft_bins);
+        frame_spectra[1].resize(fft_bins);
         
-        rtpghi::calculate_freq_gradients(
-            curr_phases.data(), fft_bins, freq_step,
-            rtpghi::GradientMethod::CENTRAL,
-            freq_grad.data()
+        for (size_t i = 0; i < fft_bins; ++i)
+        {
+            frame_spectra[0][i] = std::polar(magnitudes[i], prev_phases[i]);
+            frame_spectra[1][i] = std::polar(magnitudes[i], curr_phases[i]);
+        }
+        
+        rtpghi::GradientOutput gradient_output {
+            time_grad.data(),
+            freq_grad.data(),
+            fft_bins,  // time_frames
+            fft_bins,  // freq_frames
+            fft_bins
+        };
+        
+        auto gradient_result = rtpghi::calculate_spectrum_gradients(
+            frame_spectra, time_step, freq_step, gradient_output,
+            rtpghi::GradientMethod::FORWARD,
+            rtpghi::GradientMethod::CENTRAL
         );
+        if (gradient_result != rtpghi::ErrorCode::OK) { continue; }
         
         // Process with RTPGHI
         rtpghi::FrameInput input {
@@ -174,7 +190,8 @@ void demonstrate_realtime_processing(size_t fft_bins, size_t num_frames)
             output_mags.data(), output_phases.data(), fft_bins
         };
         
-        processor.process(input, output);
+        auto process_result = processor.process(input, output);
+        if (process_result != rtpghi::ErrorCode::OK) { continue; }
         
         auto frame_end = std::chrono::high_resolution_clock::now();
         auto frame_duration = std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start);

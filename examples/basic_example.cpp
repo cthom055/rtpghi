@@ -1,4 +1,5 @@
 #include <cmath>
+#include <complex>
 #include <iostream>
 #include <rtpghi/rtpghi.hpp>
 #include <vector>
@@ -56,19 +57,37 @@ int main()
 
     std::cout << "Step 1: Calculate gradients\n";
     
-    // Calculate time gradients (phase change between frames)
-    rtpghi::calculate_time_gradients(
-        prev_phases.data(), curr_phases.data(), fft_bins,
-        time_step, rtpghi::GradientMethod::FORWARD,
-        time_gradients.data()
+    // Create complex spectrum data from magnitudes and phases
+    std::vector<std::vector<std::complex<float>>> spectra(2);
+    spectra[0].resize(fft_bins);
+    spectra[1].resize(fft_bins);
+    
+    for (size_t i = 0; i < fft_bins; ++i)
+    {
+        spectra[0][i] = std::polar(magnitudes[i], prev_phases[i]);
+        spectra[1][i] = std::polar(magnitudes[i], curr_phases[i]);
+    }
+    
+    // Calculate gradients using enhanced API
+    rtpghi::GradientOutput gradient_output {
+        time_gradients.data(),
+        freq_gradients.data(),
+        fft_bins,  // time_frames
+        fft_bins,  // freq_frames
+        fft_bins
+    };
+    
+    auto gradient_result = rtpghi::calculate_spectrum_gradients(
+        spectra, time_step, freq_step, gradient_output,
+        rtpghi::GradientMethod::FORWARD,
+        rtpghi::GradientMethod::CENTRAL
     );
     
-    // Calculate frequency gradients (phase change across bins)
-    rtpghi::calculate_freq_gradients(
-        curr_phases.data(), fft_bins, freq_step,
-        rtpghi::GradientMethod::CENTRAL,
-        freq_gradients.data()
-    );
+    if (gradient_result != rtpghi::ErrorCode::OK)
+    {
+        std::cerr << "Error: Gradient calculation failed\n";
+        return 1;
+    }
     
     std::cout << "         Time and frequency gradients calculated\n\n";
 
